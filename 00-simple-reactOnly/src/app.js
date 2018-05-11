@@ -6,9 +6,9 @@ class App extends React.Component {
         this.state = {
             count: 0,
         };
-    }
+    };
 
-    incDecHandler =  (by) => {
+    incDecHandler = (by) => {
         this.setState((prevState) => ({
             count: prevState.count + by
         }));
