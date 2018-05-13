@@ -1,7 +1,6 @@
 module.exports = {
     entry: __dirname + '/src/index.js',
     output: {
-        path: __dirname + '/public',
         filename: 'bundle.js'
     },
     module: {
@@ -22,4 +21,7 @@ module.exports = {
     resolve: {
         extensions: ['*', '.js', '.jsx', '.elm'],
     },
+    devServer: {
+        contentBase: '../public/',
+    }
 }
