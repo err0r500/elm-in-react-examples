@@ -1,12 +1,13 @@
 import React from 'react';
-import CounterComponent from "./counterComponent";
+import SimpleCounter from "./simpleCounter";
 
 class App extends React.Component {
+
     render() {
         return (
             <div>
-                <CounterComponent/>
-                <CounterComponent/>
+                <SimpleCounter/>
+                <SimpleCounter/>
             </div>
         )
     }

@@ -2,16 +2,13 @@ import React from 'react';
 import Elm from 'react-elm-components'
 import {Counter} from './elm/Counter'
 
-class CounterComponent extends React.Component {
+class SimpleCounter extends React.Component {
     constructor() {
         super();
         this.state = {
-            count: 0,
+            count: 12,
         };
     }
-
-    incDecHandler = function () {
-    };
 
     elmPorts = (ports) => {
         // will trigger the subscription in CounterComponent.elm
@@ -29,7 +26,7 @@ class CounterComponent extends React.Component {
     render() {
         return (
             <div>
-                <Elm src={Counter} ports={this.elmPorts}/>
+                <Elm src={Counter} ports={this.elmPorts} flags={{count:this.state.count}}/>
 
                 <button onClick={() => this.incDecHandler(1)}>+</button>
                 <button onClick={() => this.incDecHandler(-1)}>-</button>
@@ -39,4 +36,4 @@ class CounterComponent extends React.Component {
     }
 }
 
-export default CounterComponent;
+export default SimpleCounter;
