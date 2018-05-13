@@ -1,27 +1,14 @@
 import React from 'react';
+import CounterComponent from "./counterComponent";
 
 class App extends React.Component {
-    constructor() {
-        super();
-        this.state = {
-            count: 0,
-        };
-    };
-
-    incDecHandler = (by) => {
-        this.setState((prevState) => ({
-            count: prevState.count + by
-        }));
-    };
-
     render() {
-        return <div>
-            <button onClick={() => this.incDecHandler(1)}>+</button>
-            <button onClick={() => this.incDecHandler(-1)}>-</button>
+        return (
             <div>
-                {this.state.count}
+                <CounterComponent/>
+                <CounterComponent/>
             </div>
-        </div>
+        )
     }
 }
 
