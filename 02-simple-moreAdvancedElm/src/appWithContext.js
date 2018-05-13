@@ -1,6 +1,5 @@
 import React from 'react';
 import SimpleCounterWithContext from "./simpleCounterWithContext";
-import Elm from 'react-elm-components'
 import {Counter} from './elm/Counter'
 
 import {ElmContext} from "./context"
@@ -15,7 +14,8 @@ class AppWithContext extends React.Component {
         };
     };
 
-    elmPorts = (ports) => {
+    componentWillMount(){
+        let ports = Counter.worker().ports;
         // will trigger the subscription in CounterComponent.elm
         this.setState(() => {
             return {incDecHandler: (by) => ports.incDecClicked.send(by)}
@@ -31,12 +31,12 @@ class AppWithContext extends React.Component {
         });
     };
 
+
+
     render() {
         return (
             <div>
                 With Shared Context :
-                <Elm src={Counter} ports={this.elmPorts}/>
-
                 <ElmContext.Provider value={this.state}>
                     <SimpleCounterWithContext/>
                     <SimpleCounterWithContext/>

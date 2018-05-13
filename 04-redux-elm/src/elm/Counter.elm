@@ -1,18 +1,15 @@
 port module Counter exposing (main)
 
-{-| Simple headless counter
-@docs main
--}
-
+import Html exposing (Html, text)
 import Json.Decode exposing (..)
 
 
-{-| the simpleCounter
--}
 main : Program Value Model Msg
 main =
-    Platform.programWithFlags
+    Html.programWithFlags
         { init = init
+
+        --        , view = view
         , update = update
         , subscriptions = subscriptions
         }
@@ -65,6 +62,15 @@ update msg model =
                     model.count + by
             in
                 ( { model | count = newCount }, countOut newCount )
+
+
+
+-- VIEW
+
+
+view : Model -> Html Msg
+view _ =
+    text ""
 
 
 
