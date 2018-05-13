@@ -10,17 +10,18 @@ class SimpleCounter extends React.Component {
         };
     }
 
+    updateStateCount = (n) => {
+        this.setState(() => {
+            return {count: n}
+        });
+    };
+
     elmPorts = (ports) => {
         // will trigger the subscription in CounterComponent.elm
         this.incDecHandler = (by) => ports.incDecClicked.send(by);
 
         // will receive the count from CounterComponent.elm
-        ports.countOut.subscribe((n) => {
-            this.setState(() => {
-                return {count: n}
-            });
-        });
-
+        ports.countOut.subscribe(this.updateStateCount);
     };
 
     render() {

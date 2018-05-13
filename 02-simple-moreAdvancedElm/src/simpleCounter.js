@@ -9,18 +9,26 @@ class SimpleCounter extends React.Component {
         };
     }
 
-    componentWillMount(){
-        let ports = Counter.worker().ports;
+    // the subscription handler has to be extracted in order to identify it during the unsubscribe
+    updateStateCount = (n) => {
+        this.setState(() => {
+            return {count: n}
+        });
+    };
+
+    componentWillMount() {
+        this.ports = Counter.worker().ports;
 
         // will trigger the subscription in CounterComponent.elm
-        this.incDecHandler = (by) => ports.incDecClicked.send(by);
+        this.incDecHandler = (by) => this.ports.incDecClicked.send(by);
 
         // will receive the count from CounterComponent.elm
-        ports.countOut.subscribe((n) => {
-            this.setState(() => {
-                return {count: n}
-            });
-        });
+        this.ports.countOut.subscribe(this.updateStateCount)
+    }
+
+    componentWillUnmount() {
+        // release the subscription to avoid memory leak (seems enough)
+        this.ports.countOut.unsubscribe(this.updateStateCount);
     }
 
     render() {
