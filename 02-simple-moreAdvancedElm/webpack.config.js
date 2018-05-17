@@ -22,6 +22,6 @@ module.exports = {
         extensions: ['*', '.js', '.jsx', '.elm'],
     },
     devServer: {
-        contentBase: '../public/',
+        contentBase: './public/',
     }
 }

@@ -1,1 +1,0 @@
-# A slightly modified version of the async example from Redux repository
