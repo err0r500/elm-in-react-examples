@@ -10,7 +10,10 @@ import Json.Decode exposing (..)
 import Debug exposing (..)
 
 
-port setVisibilityFilter : (Json.Encode.Value -> msg) -> Sub msg
+-- NB : a port ending with Payload will only get the payload property, otherwise the full action is sent
+
+
+port setVisibilityFilterPayload : (Json.Encode.Value -> msg) -> Sub msg
 
 
 
@@ -40,6 +43,10 @@ type Msg
     | UpdateFilter String
 
 
+
+-- ensureActionReceived just checks that the action payload is actually formed as expected
+
+
 ensureActionReceived : Json.Decode.Value -> Msg
 ensureActionReceived payload =
     let
@@ -57,7 +64,24 @@ ensureActionReceived payload =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Sub.batch [ setVisibilityFilter ensureActionReceived ]
+    Sub.batch [ setVisibilityFilterPayload ensureActionReceived ]
+
+
+
+--format the response back to JS
+
+
+modelToRedux : Model -> Json.Encode.Value
+modelToRedux model =
+    case model of
+        ShowAll ->
+            Json.Encode.string "SHOW_ALL"
+
+        ShowCompleted ->
+            Json.Encode.string "SHOW_COMPLETED"
+
+        ShowActive ->
+            Json.Encode.string "SHOW_ACTIVE"
 
 
 reduxToModel : ReduxModel -> Model
@@ -74,19 +98,6 @@ reduxToModel reduxModel =
 
         _ ->
             ShowAll
-
-
-modelToRedux : Model -> Json.Encode.Value
-modelToRedux model =
-    case model of
-        ShowAll ->
-            Json.Encode.string "SHOW_ALL"
-
-        ShowCompleted ->
-            Json.Encode.string "SHOW_COMPLETED"
-
-        ShowActive ->
-            Json.Encode.string "SHOW_ACTIVE"
 
 
 
@@ -111,8 +122,7 @@ init : Json.Decode.Value -> ( Model, Cmd Msg )
 init initialStateFromJS =
     case Json.Decode.decodeValue Json.Decode.string initialStateFromJS of
         Ok f ->
-            Debug.log ("initial => " ++ f)
-                ( reduxToModel f, Cmd.none )
+            ( reduxToModel f, Cmd.none )
 
         Err err ->
             Debug.log ("Error parsing flag, falling back to default value => " ++ toString initialStateFromJS)

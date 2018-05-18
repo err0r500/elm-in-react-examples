@@ -1,11 +1,13 @@
 import React from 'react'
 import {render} from 'react-dom'
-import {createStore, applyMiddleware, compose} from 'redux'
+import {createStore, applyMiddleware, compose, combineReducers} from 'redux'
 import {Provider} from 'react-redux'
 import App from './components/App'
 import rootReducer from './reducers'
-import Elm from './reducers/VisibilityFilter'
-import createElmMiddleware from 'elm-in-redux'
+
+import ElmBridge from 'elm-in-redux'
+import ElmModule from './reducers/VisibilityFilter'
+
 import {VisibilityFilters} from "./actions";
 
 const loggerMiddleware = store => next => action => {
@@ -17,19 +19,20 @@ const loggerMiddleware = store => next => action => {
     return result
 }
 
+const elmBridge = new ElmBridge(ElmModule.VisibilityFilter, VisibilityFilters.SHOW_ALL);
 
-const {sendActionsToElm, subscribeToElm} = createElmMiddleware(
-    Elm.VisibilityFilter.worker(VisibilityFilters.SHOW_ALL) //Reducer is the name of your exported elm module
-)
+const store = createStore(
+    rootReducer(elmBridge.reducer),
+    compose(
+        applyMiddleware(
+            elmBridge.sendActionsToElm,
+            loggerMiddleware
+        ),
+        window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+    )
+);
 
-const store = createStore(rootReducer, compose(
-    applyMiddleware(
-        sendActionsToElm,
-        loggerMiddleware
-    ),
-    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
-))
-subscribeToElm(store); // to receive messages from elm module
+elmBridge.subscribe(store); // to receive messages from elm module
 
 
 render(

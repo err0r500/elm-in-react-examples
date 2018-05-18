@@ -5,8 +5,8 @@
   "dependencies": {
     "elm-in-redux": "git+ssh://git@github.com/err0r500/elm-in-redux.git",
     "prop-types": "^15.6.1",
-    "react": "^16.3.1",
-    "react-dom": "^16.3.1",
+    "react": "^16.3.2",
+    "react-dom": "^16.3.2",
     "react-redux": "^5.0.7",
     "redux": "^3.5.2"
   },
