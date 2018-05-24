@@ -3,19 +3,28 @@ port module Counter exposing (main)
 import Html exposing (Html, text)
 
 
-main : Program Never Model Msg
-main =
-    Html.program
-        { init = init
-        , view = view
-        , update = update
-        , subscriptions = subscriptions
-        }
-
-
-init : ( Model, Cmd Msg )
+init : Model
 init =
-    ( { count = 0 }, Cmd.none )
+    { count = 0 }
+
+
+
+-- PORTS
+
+
+port incDecClicked : (Int -> a) -> Sub a
+
+
+port countOut : Int -> Cmd a
+
+
+
+-- SUBSCRIPTIONS
+
+
+subscriptions : Model -> Sub Msg
+subscriptions _ =
+    incDecClicked IncDec
 
 
 
@@ -37,37 +46,23 @@ type Msg
 update : Msg -> Model -> ( Model, Cmd msg )
 update msg model =
     case msg of
-        IncDec by ->
+        IncDec incrBy ->
             let
                 newCount =
-                    model.count + by
+                    model.count + incrBy
             in
                 ( { model | count = newCount }, countOut newCount )
 
 
 
--- VIEW
+-- MAIN
 
 
-view : Model -> Html Msg
-view _ =
-    text ""
-
-
-
--- PORTS
-
-
-port incDecClicked : (Int -> msg) -> Sub msg
-
-
-port countOut : Int -> Cmd msg
-
-
-
--- SUBSCRIPTIONS
-
-
-subscriptions : Model -> Sub Msg
-subscriptions model =
-    incDecClicked IncDec
+main : Program Never Model Msg
+main =
+    Html.program
+        { init = ( init, Cmd.none )
+        , view = \_ -> text ""
+        , update = update
+        , subscriptions = subscriptions
+        }

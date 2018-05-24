@@ -7,37 +7,22 @@ port module Counter exposing (main)
 import Json.Decode exposing (..)
 
 
-{-| the simpleCounter
--}
-main : Program Value Model Msg
-main =
-    Platform.programWithFlags
-        { init = init
-        , update = update
-        , subscriptions = subscriptions
-        }
+-- PORTS
 
 
-init : Value -> ( Model, Cmd Msg )
-init flags =
-    case Json.Decode.decodeValue flagsDecoder flags of
-        Ok f ->
-            ( { count = f.count }, Cmd.none )
-
-        Err err ->
-            Debug.log
-                ("Error parsing flag, falling back to default value => " ++ err)
-                ( { count = 1000 }, Cmd.none )
+port incDecClicked : (Int -> msg) -> Sub msg
 
 
-flagsDecoder : Json.Decode.Decoder Flags
-flagsDecoder =
-    Json.Decode.map Flags
-        (field "count" int)
+port countOut : Int -> Cmd msg
 
 
-type alias Flags =
-    { count : Int }
+
+-- SUBSCRIPTIONS
+
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    incDecClicked IncDec
 
 
 
@@ -68,19 +53,37 @@ update msg model =
 
 
 
--- PORTS
+--INIT
 
 
-port incDecClicked : (Int -> msg) -> Sub msg
+type alias Flags =
+    { count : Int }
 
 
-port countOut : Int -> Cmd msg
+init : Value -> ( Model, Cmd Msg )
+init flags =
+    case Json.Decode.decodeValue flagsDecoder flags of
+        Ok f ->
+            ( { count = f.count }, Cmd.none )
+
+        Err err ->
+            Debug.log
+                ("Error parsing flag, falling back to default value => " ++ err)
+                ( { count = 1000 }, Cmd.none )
 
 
+flagsDecoder : Json.Decode.Decoder Flags
+flagsDecoder =
+    Json.Decode.map Flags
+        (field "count" int)
 
--- SUBSCRIPTIONS
 
-
-subscriptions : Model -> Sub Msg
-subscriptions model =
-    incDecClicked IncDec
+{-| the simpleCounter
+-}
+main : Program Value Model Msg
+main =
+    Platform.programWithFlags
+        { init = init
+        , update = update
+        , subscriptions = subscriptions
+        }

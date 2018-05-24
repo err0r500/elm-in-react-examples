@@ -1,9 +1,5 @@
 port module VisibilityFilter exposing (main)
 
-{-| Simple headless counter
-@docs main
--}
-
 import Redux
 import Json.Encode exposing (Value)
 import Json.Decode exposing (..)
@@ -14,6 +10,20 @@ import Debug exposing (..)
 
 
 port setVisibilityFilterPayload : (Json.Encode.Value -> msg) -> Sub msg
+
+
+subscriptions : Model -> Sub Msg
+subscriptions _ =
+    Sub.batch [ setVisibilityFilterPayload ensureActionReceived ]
+
+
+
+-- ACTIONS
+
+
+type Msg
+    = Noop
+    | UpdateFilter String
 
 
 
@@ -30,21 +40,8 @@ type FilterEnum
     | ShowActive
 
 
-type alias ReduxModel =
-    String
 
-
-
--- ACTIONS
-
-
-type Msg
-    = Noop
-    | UpdateFilter String
-
-
-
--- ensureActionReceived just checks that the action payload is actually formed as expected
+-- ADAPTERS
 
 
 ensureActionReceived : Json.Decode.Value -> Msg
@@ -58,30 +55,16 @@ ensureActionReceived payload =
                 UpdateFilter action
 
             Err err ->
-                Debug.log ("Error parsing input, falling back to default value => " ++ toString payload ++ err)
+                Debug.log ("Error parsing input => " ++ err)
                     Noop
 
 
-subscriptions : Model -> Sub Msg
-subscriptions model =
-    Sub.batch [ setVisibilityFilterPayload ensureActionReceived ]
+
+-- UPDATE
 
 
-
---format the response back to JS
-
-
-modelToRedux : Model -> Json.Encode.Value
-modelToRedux model =
-    case model of
-        ShowAll ->
-            Json.Encode.string "SHOW_ALL"
-
-        ShowCompleted ->
-            Json.Encode.string "SHOW_COMPLETED"
-
-        ShowActive ->
-            Json.Encode.string "SHOW_ACTIVE"
+type alias ReduxModel =
+    String
 
 
 reduxToModel : ReduxModel -> Model
@@ -101,7 +84,24 @@ reduxToModel reduxModel =
 
 
 
--- UPDATE
+--format the response back to JS
+
+
+modelToRedux : Model -> Json.Encode.Value
+modelToRedux model =
+    case model of
+        ShowAll ->
+            Json.Encode.string "SHOW_ALL"
+
+        ShowCompleted ->
+            Json.Encode.string "SHOW_COMPLETED"
+
+        ShowActive ->
+            Json.Encode.string "SHOW_ACTIVE"
+
+
+
+-- UPDATES
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -112,10 +112,6 @@ update action model =
 
         Noop ->
             ( model, Cmd.none )
-
-
-
--- init sets the initial state (with an eventual fallback)
 
 
 init : Json.Decode.Value -> ( Model, Cmd Msg )
@@ -129,8 +125,6 @@ init initialStateFromJS =
                 ( ShowActive, Cmd.none )
 
 
-{-| the simpleCounter
--}
 main : Program Json.Decode.Value Model Msg
 main =
     Redux.programWithFlags

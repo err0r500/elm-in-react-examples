@@ -3,10 +3,10 @@
   "version": "0.0.1",
   "private": true,
   "dependencies": {
-    "elm-in-redux": "git+ssh://git@github.com/err0r500/elm-in-redux.git",
+    "elm-in-redux": "git+ssh://git@github.com/err0r500/elm-in-redux.git#v1.0.4",
     "prop-types": "^15.6.1",
-    "react": "^16.3.2",
-    "react-dom": "^16.3.2",
+    "react": "^16.4.0",
+    "react-dom": "^16.4.0",
     "react-redux": "^5.0.7",
     "redux": "^3.5.2"
   },
@@ -17,7 +17,7 @@
     "babel-preset-react": "^6.24.1",
     "elm-webpack-loader": "^4.5.0",
     "webpack": "^4.8.2",
-    "webpack-cli": "^2.1.3",
+    "webpack-cli": "^2.1.4",
     "webpack-dev-server": "^3.1.4"
   },
   "scripts": {
